@@ -1,0 +1,90 @@
+<mat-toolbar>
+  <button mat-raised-button color="primary" routerLink="/add-task">
+    <mat-icon>add</mat-icon>
+    Add Task
+  </button>
+</mat-toolbar>
+
+<div class="t-w">
+  <!-- Filter Section -->
+  <div class="f-p">
+    <mat-form-field class="m-p">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="taskStatusFilter" (ngModelChange)="applyFilters()">
+        <mat-option value="All">All</mat-option>
+        <mat-option value="Completed">Completed</mat-option>
+        <mat-option value="Pending">Pending</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="m-p">
+      <mat-label>Priority</mat-label>
+      <mat-select [(ngModel)]="taskPriorityFilter" (ngModelChange)="applyFilters()">
+        <mat-option value="All">All</mat-option>
+        <mat-option value="Low">Low</mat-option>
+        <mat-option value="Medium">Medium</mat-option>
+        <mat-option value="High">High</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button (click)="resetFilters()">Reset Filters</button>
+  </div>
+
+  <!-- Sorting Section -->
+  <div class="s-p">
+    <button mat-raised-button (click)="sortByDueDate()" class="m-p">Sort by Due Date</button>
+    <button mat-raised-button (click)="sortByPriority()">Sort by Priority</button>
+  </div>
+
+  <!-- Task Table -->
+  <ng-container *ngIf="filteredTasks" class="s-p">
+    <table mat-table [dataSource]="filteredTasks || []" class="mat-elevation-z8">
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Title </th>
+        <td mat-cell *matCellDef="let task"> {{ task.title }} </td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let task"> {{ task.description }} </td>
+      </ng-container>
+
+      <!-- Due Date Column -->
+      <ng-container matColumnDef="dueDate">
+        <th mat-header-cell *matHeaderCellDef> Due Date </th>
+        <td mat-cell *matCellDef="let task"> {{ task.dueDate | date }} </td>
+      </ng-container>
+
+      <!-- Priority Column -->
+      <ng-container matColumnDef="priority">
+        <th mat-header-cell *matHeaderCellDef> Priority </th>
+        <td mat-cell *matCellDef="let task"> {{ task.priority }} </td>
+      </ng-container>
+
+      <!-- Completed Column -->
+      <ng-container matColumnDef="completed">
+        <th mat-header-cell *matHeaderCellDef> Completed </th>
+        <td mat-cell *matCellDef="let task">
+          <mat-checkbox [checked]="task.completed" (change)="onToggleCompletion(task.id)"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let task">
+          <button mat-raised-button class="m-p" [routerLink]="['/edit-task', task.id]">Edit</button>
+          <button mat-raised-button (click)="onDeleteTask(task.id)">Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['title', 'description', 'dueDate', 'priority', 'completed', 'actions']">
+      </tr>
+      <tr mat-row
+        *matRowDef="let row; columns: ['title', 'description', 'dueDate', 'priority', 'completed', 'actions'];"></tr>
+    </table>
+  </ng-container>
+  <!-- <ng-template #loading>Loading...</ng-template> -->
+</div>
